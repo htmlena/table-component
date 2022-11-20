@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from "react";
 import data from "../data.json";
+import { Pagination } from "./Pagination";
 import { TableBody } from "./TableBody";
 import { TableHeads } from "./TableHeads";
 
@@ -10,6 +11,8 @@ type TableProps = {
 export const Table: FunctionComponent<TableProps> = ({ caption }) => {
   const [tableData, setTableData] = useState(data);
   const [searchedValue, setSearchedValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(20);
 
   const columns = [
     { label: "Project Name", accessor: "name" },
@@ -33,6 +36,15 @@ export const Table: FunctionComponent<TableProps> = ({ caption }) => {
     }
   };
 
+  // paging
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+
+  const paginateFront = () => setCurrentPage(currentPage + 1);
+  const paginateBack = () => setCurrentPage(currentPage - 1);
+
   return (
     <>
       <div className='flex flex-col mt-4 my-0 mx-auto max-w-[800px]'>
@@ -52,11 +64,23 @@ export const Table: FunctionComponent<TableProps> = ({ caption }) => {
             />
           </div>
         </div>
-        <div role='grid' aria-colcount={5} className='my-0 mx-auto'>
-          <table className='border border-solid border-slate-200 text-sm md:text-base mt-4'>
-            <TableHeads columns={columns} handleSorting={handleSorting} />
-            <TableBody tableData={tableData} searchedValue={searchedValue} />
-          </table>
+        <div>
+          <div role='grid' aria-colcount={5} className='my-0 mx-auto'>
+            <table className='border border-solid border-slate-200 text-sm md:text-base mt-4'>
+              <TableHeads columns={columns} handleSorting={handleSorting} />
+              <TableBody
+                tableData={currentRows}
+                searchedValue={searchedValue}
+              />
+            </table>
+          </div>
+          <Pagination
+            rowsPerPage={rowsPerPage}
+            totalRows={tableData.length}
+            paginateBack={paginateBack}
+            paginateFront={paginateFront}
+            currentPage={currentPage}
+          />
         </div>
       </div>
     </>
