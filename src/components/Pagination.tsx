@@ -16,7 +16,7 @@ export const Pagination: FunctionComponent<PaginationProps> = ({
   currentPage,
 }) => {
   return (
-    <div className='py-2 text-end'>
+    <div className='py-2 text-start md:text-end'>
       <div>
         <p className='text-sm text-slate-700'>
           Showing
